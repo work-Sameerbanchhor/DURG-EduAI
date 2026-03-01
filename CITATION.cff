@@ -1,0 +1,47 @@
+cff-version: 1.2.0
+message: "If you use this software or research, please cite it using the metadata below."
+type: software
+title: "DURG-EduAI: A Multi-Task Machine Learning Framework for Student Academic Performance Prediction"
+abstract: >
+  DURG-EduAI is a large-scale multi-task machine learning framework for academic
+  performance prediction, result classification, dropout risk assessment, subject
+  benchmarking, and early warning generation in Indian higher education.
+  Trained on 248,139 student records from Hemchand Yadav University, Durg (2016-2025).
+authors:
+  - family-names: "Banchhor"
+    given-names: "Sameer"
+    orcid: "https://orcid.org/0009-0000-7055-6336"
+    affiliation: "Hemchand Yadav University, Durg, Chhattisgarh, India"
+    email: "work.sameerbanchhor@outlook.com"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.18826162"
+    description: "Zenodo DOI for the research paper"
+repository-code: "https://github.com/work-sameerbanchhor/DURG-EduAI"
+url: "https://doi.org/10.5281/zenodo.18826162"
+license: "CC-BY-4.0"
+version: "1.0.0"
+date-released: "2026-03-01"
+keywords:
+  - educational data mining
+  - machine learning
+  - student performance prediction
+  - dropout risk
+  - SGPA prediction
+  - Indian higher education
+  - XGBoost
+  - NLP
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Banchhor"
+      given-names: "Sameer"
+      orcid: "https://orcid.org/0009-0000-7055-6336"
+  title: >
+    DURG-EduAI: A Multi-Task Machine Learning Framework for Student Academic
+    Performance Prediction, Result Classification, and Dropout Risk Assessment
+    in Indian Higher Education
+  year: 2026
+  publisher: "Zenodo"
+  doi: "10.5281/zenodo.18826162"
+  url: "https://doi.org/10.5281/zenodo.18826162"
