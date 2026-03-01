@@ -83,16 +83,6 @@ DURG-EduAI/
 │
 ├── 📁 demo/
 │   └── app.py                      ← Gradio HuggingFace Space app
-│
-├── 📁 figures/                     ← All paper figures
-│   ├── fig1_dataset.png
-│   ├── fig2_sgpa.png
-│   ├── fig3_errors.png
-│   ├── fig4_importance.png
-│   ├── fig5_classification.png
-│   ├── fig6_subjects.png
-│   └── fig7_summary.png
-│
 └── 📄 requirements.txt
 ```
 
