@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>🎓 DURG-EduAI</h1>
+<h1>DURG-EduAI</h1>
 
 <h3>University Result Analytics Platform & Multi-Task Academic Prediction Framework</h3>
 
@@ -12,7 +12,7 @@
 </p>
 <p>
   <a href="https://doi.org/10.5281/zenodo.18826162"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18826162.svg" alt="DOI"/></a>
-  
+
   <a href="https://huggingface.co/collections/sameerbanchhor-work/durg-edu-ai"><img src="https://img.shields.io/badge/🤗%20HuggingFace-Models%20%26%20Dataset-yellow" alt="HuggingFace"/></a>
   <a href="https://orcid.org/0009-0000-7055-6336"><img src="https://img.shields.io/badge/ORCID-0009--0000--7055--6336-green?logo=orcid" alt="ORCID"/></a>
   <img src="https://img.shields.io/badge/Python-3.9%2B-yellow?logo=python" alt="Python"/>
@@ -25,7 +25,7 @@
 
 ---
 
-## 📌 Overview
+## Overview
 
 **DURG-EduAI** is a full-stack academic intelligence system built on real examination data from Hemchand Yadav University. It has two integrated components:
 
@@ -36,7 +36,7 @@
 
 ---
 
-## 🏆 Model Performance
+## Model Performance
 
 | Task | Model | Metric | Score |
 |------|-------|--------|-------|
@@ -48,7 +48,7 @@
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 DURG-EduAI/
@@ -102,7 +102,7 @@ DURG-EduAI/
 
 ---
 
-## 🧩 System Architecture
+## System Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -128,7 +128,7 @@ DURG-EduAI/
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -177,7 +177,7 @@ docker run -p 7860:7860 du-api
 
 ---
 
-## 🔌 API Reference
+## API Reference
 
 ### Core Search
 
@@ -325,7 +325,7 @@ S6: near_fail_subjects ≥ 3              → +1
 
 ---
 
-## ⚠️ Limitations
+## Limitations
 
 - Dropout risk labels are **engineered proxies** derived from exam outcomes — not confirmed longitudinal withdrawal records.
 - High dropout accuracy partially reflects the recoverability of the labeling logic.
@@ -334,7 +334,7 @@ S6: near_fail_subjects ≥ 3              → +1
 
 ---
 
-## 📄 Citation
+## Citation
 
 ```bibtex
 @misc{banchhor2026durgai,
@@ -351,7 +351,7 @@ S6: near_fail_subjects ≥ 3              → +1
 
 ---
 
-## 🔗 Links
+## Links
 
 | Resource | Link |
 |----------|------|
