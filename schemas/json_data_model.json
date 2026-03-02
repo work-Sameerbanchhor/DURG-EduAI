@@ -1,0 +1,63 @@
+[
+  {
+    "metadata": {
+      "description": "Context derived from the folder directory structure",
+      "batch_year": "String (e.g., 'B1_2018_19')",
+      "subject": "String (e.g., 'Comp_Science', 'Physics')",
+      "semester": "String (e.g., 'First_Semester')",
+      "filename": "String (e.g., '33318097001.html')"
+    },
+    "exam_info": {
+      "description": "Details extracted from the top header of the result sheet",
+      "exam_name": "String (Full Title, e.g., 'M.Sc. C.S.-SEMESTER-1...')",
+      "declared_date": "String (Date format DD/MM/YYYY)"
+    },
+    "student_info": {
+      "description": "Personal details extracted from the top table",
+      "roll_number": "String (Unique ID)",
+      "enrollment_no": "String (University Enrollment ID)",
+      "student_name": "String",
+      "student_type": "String (e.g., 'REGULAR', 'ATKT')",
+      "father_name": "String",
+      "mother_name": "String",
+      "college": "String (College Name & Code)",
+      "center": "String (Exam Center Name & Code)"
+    },
+    "subjects": [
+      {
+        "description": "List of objects representing individual rows in the marks table",
+        "subject_code": "String (e.g., '101', '403C')",
+        "subject_name": "String",
+        "max_marks": "String (Maximum possible score)",
+        "min_marks": "String (Minimum passing score)",
+        "theory_obt": {
+          "description": "Theory paper marks (External)",
+          "I": "String (Paper 1 marks, or empty)",
+          "II": "String (Paper 2 marks, or empty)",
+          "III": "String (Paper 3 marks, or empty)"
+        },
+        "sessional_obt": {
+          "description": "Internal assessment / CCE marks",
+          "I": "String (Sessional 1, or empty)",
+          "II": "String (Sessional 2, or empty)",
+          "III": "String (Sessional 3, or empty)"
+        },
+        "theory_total": "String (Sum of Theory papers + Sessional, depending on course structure)",
+        "practical_obt": {
+          "description": "Laboratory / Practical marks",
+          "I": "String (Practical Exam 1)",
+          "II": "String (Practical Exam 2)",
+          "sess": "String (Practical Sessional/Record)"
+        },
+        "total": "String (Final Marks Obtained for this Subject)",
+        "status": "String (e.g., '*', 'D', or empty if normal)"
+      }
+    ],
+    "result_summary": {
+      "description": "Footer data indicating overall performance",
+      "total_marks_obtained": "String (Grand Total sum of all subjects)",
+      "sgpa": "String (Semester Grade Point Average)",
+      "final_result": "String (e.g., 'PASS', 'FAIL', 'ATKT')"
+    }
+  }
+]

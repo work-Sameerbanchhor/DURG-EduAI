@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Search | Durg University</title>
+    <meta name="description"
+        content="Search student academic results by roll number or name – Hemchand Yadav Vishwavidyalaya Result Portal.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="theme.js"></script>
+    <style>
+        /* =============================================
+           DESIGN TOKENS
+        ============================================= */
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --surface: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-soft: rgba(255, 255, 255, 0.04);
+            --text: #e8e8ed;
+            --text-secondary: #9898a6;
+            --muted: #6b6b7b;
+            --accent: #7c3aed;
+            --accent2: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #7c3aed, #3b82f6);
+            --glow-accent: rgba(124, 58, 237, 0.25);
+            --pass: #22c55e;
+            --pass-bg: rgba(34, 197, 94, 0.12);
+            --pass-border: rgba(34, 197, 94, 0.3);
+            --fail: #ef4444;
+            --fail-bg: rgba(239, 68, 68, 0.12);
+            --fail-border: rgba(239, 68, 68, 0.3);
+            --warn: #f59e0b;
+            --warn-bg: rgba(245, 158, 11, 0.12);
+            --warn-border: rgba(245, 158, 11, 0.3);
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --glass: blur(20px) saturate(180%);
+        }
+
+        :root.light-mode {
+            --bg: #f5f5f7;
+            --bg-card: rgba(0, 0, 0, 0.02);
+            --surface: rgba(0, 0, 0, 0.03);
+            --border: rgba(0, 0, 0, 0.06);
+            --border-soft: rgba(0, 0, 0, 0.02);
+            --text: #1d1d1f;
+            --text-secondary: #424245;
+            --muted: #86868b;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
+            background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 58, 237, 0.1), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(59, 130, 246, 0.05), transparent);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 8px;
+        }
+
+        .light-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            display: none;
+        }
+
+        .theme-toggle .icon-sun {
+            display: block;
+        }
+
+        .light-mode .theme-toggle .icon-sun {
+            display: none;
+        }
+
+        .light-mode .theme-toggle .icon-moon {
+            display: block;
+        }
+
+        .light-mode .site-header {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .light-mode .result-card,
+        .light-mode .widget,
+        .light-mode .info-cell {
+            background: #ffffff;
+            border-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .light-mode .brand-text h1,
+        .light-mode .search-headline,
+        .light-mode .exam-title,
+        .light-mode .info-value,
+        .light-mode .stat-value,
+        .light-mode .total-val {
+            color: var(--text);
+        }
+
+        .light-mode .search-box {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 58, 237, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(59, 130, 246, 0.08), transparent);
+            background-attachment: fixed;
+        }
+
+        /* =============================================
+           HEADER
+        ============================================= */
+        .site-header {
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: var(--glass);
+            -webkit-backdrop-filter: var(--glass);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .site-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--accent-gradient);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .brand-emblem {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            background: var(--accent-gradient);
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px var(--glow-accent);
+        }
+
+        .brand-text h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+
+        .brand-text p {
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 6px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-left: auto;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all .2s;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-link.active {
+            color: #fff;
+            background: rgba(124, 58, 237, 0.2);
+        }
+
+        .server-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle-wrap {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            transition: background .3s;
+        }
+
+        .header-rule {
+            display: none;
+        }
+
+        /* Mobile Nav Drawer */
+        .nav-drawer {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+        }
+
+        .nav-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .nav-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(280px, 80vw);
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: var(--glass);
+            -webkit-backdrop-filter: var(--glass);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            gap: 8px;
+            box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+            border-left: 1px solid var(--border);
+        }
+
+        .nav-panel-close {
+            align-self: flex-end;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: #fff;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+
+        .nav-drawer-link {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 12px 16px;
+            border-radius: 10px;
+            transition: all .2s;
+        }
+
+        .nav-drawer-link:hover,
+        .nav-drawer-link.active {
+            color: #fff;
+            background: rgba(124, 58, 237, 0.15);
+        }
+
+        .nav-drawer.open {
+            display: block;
+        }
+
+        /* =============================================
+           FOOTER PAD
+        ============================================= */
+        .page-footer {
+            padding: 80px 0 60px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* =============================================
+           PAGE & SEARCH HERO
+        ============================================= */
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .search-hero {
+            padding: 48px 0 36px;
+        }
+
+        .section-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .section-eyebrow::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .search-headline {
+            font-size: clamp(26px, 4vw, 38px);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.15;
+            margin-bottom: 28px;
+        }
+
+        .search-headline em {
+            font-style: normal;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 620px;
+            background: var(--bg-card);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md), 0 0 0 1px var(--border);
+            transition: box-shadow .3s;
+        }
+
+        .search-box:focus-within {
+            box-shadow: var(--shadow-lg), 0 0 0 2px var(--accent);
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 18px 22px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: var(--text);
+            min-width: 0;
+        }
+
+        .search-box input::placeholder {
+            color: var(--muted);
+            font-weight: 300;
+        }
+
+        .search-btn {
+            padding: 0 28px;
+            background: var(--accent-gradient);
+            color: #fff;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity .2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-btn:hover {
+            opacity: 0.85;
+        }
+
+        .search-hint {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .search-hint code {
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: var(--text-secondary);
+        }
+
+        /* =============================================
+           STATUS MESSAGES
+        ============================================= */
+        .status-area {
+            padding: 32px 0 0;
+            display: none;
+        }
+
+        .loader-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .loader-ring {
+            width: 36px;
+            height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loader-text {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-pill.error {
+            background: var(--fail-bg);
+            color: var(--fail);
+            border: 1px solid var(--fail-border);
+        }
+
+        .status-pill.no-data {
+            background: var(--warn-bg);
+            color: var(--warn);
+            border: 1px solid var(--warn-border);
+        }
+
+        /* =============================================
+           RESULT CARD
+        ============================================= */
+        #resultsContainer {
+            padding: 32px 0 80px;
+        }
+
+        .result-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 32px;
+            overflow: hidden;
+            backdrop-filter: var(--glass);
+            -webkit-backdrop-filter: var(--glass);
+            animation: riseIn .5s cubic-bezier(.22, 1, .36, 1) both;
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-accent {
+            height: 2px;
+            background: var(--accent-gradient);
+        }
+
+        .card-accent.pass {
+            background: linear-gradient(90deg, #22c55e, #4ade80 60%, #3b82f6 100%);
+        }
+
+        .card-accent.fail {
+            background: linear-gradient(90deg, #ef4444, #f87171 60%, #dc2626 100%);
+        }
+
+        .card-accent.supply {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24 60%, #f59e0b 100%);
+        }
+
+        .card-top {
+            padding: 24px 28px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 16px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .exam-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.35;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .exam-subtitle {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .result-pill {
+            padding: 6px 18px;
+            border-radius: 99px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            border: 1.5px solid currentColor;
+        }
+
+        .result-pill.PASS {
+            color: var(--pass);
+            background: var(--pass-bg);
+        }
+
+        .result-pill.FAIL {
+            color: var(--fail);
+            background: var(--fail-bg);
+        }
+
+        .result-pill.SUPPLY,
+        .result-pill.ATKT {
+            color: var(--warn);
+            background: var(--warn-bg);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-cell {
+            padding: 16px 22px;
+            border-right: 1px solid var(--border-soft);
+        }
+
+        .info-cell:last-child {
+            border-right: none;
+        }
+
+        .info-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            line-height: 1.4;
+        }
+
+        .stats-strip {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+            flex-wrap: wrap;
+        }
+
+        .pct-cell {
+            flex: 2;
+            min-width: 180px;
+            padding: 18px 22px;
+            border-right: 1px solid var(--border-soft);
+        }
+
+        .pct-bar-track {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .pct-bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: var(--accent-gradient);
+            transition: width 1.2s cubic-bezier(.22, 1, .36, 1);
+            width: 0;
+        }
+
+        .stat-cell {
+            flex: 1;
+            min-width: 130px;
+            padding: 18px 22px;
+            border-right: 1px solid var(--border-soft);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-cell:last-child {
+            border-right: none;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .stat-value.gold {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sub-value {
+            font-size: 14px;
+            color: var(--muted);
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+        }
+
+        .year-strip {
+            display: flex;
+            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-section {
+            padding: 20px 28px 28px;
+        }
+
+        .section-divider {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            background: rgba(124, 58, 237, 0.2);
+        }
+
+        th {
+            padding: 11px 13px;
+            text-align: center;
+            font-size: 10.5px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #a78bfa;
+            white-space: nowrap;
+        }
+
+        th.left {
+            text-align: left;
+        }
+
+        td {
+            padding: 12px 13px;
+            text-align: center;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border-soft);
+            color: var(--text);
+        }
+
+        td.left {
+            text-align: left;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .subject-code {
+            font-size: 11px;
+            font-weight: 700;
+            color: #a78bfa;
+            font-family: monospace;
+        }
+
+        .subject-name-cell {
+            font-weight: 500;
+            min-width: 160px;
+            max-width: 240px;
+            line-height: 1.5;
+        }
+
+        .marks-val {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .marks-strong {
+            font-weight: 700;
+            color: #a78bfa;
+        }
+
+        .marks-empty {
+            color: rgba(255, 255, 255, 0.15);
+        }
+
+        .total-val {
+            font-weight: 700;
+            font-size: 14px;
+            color: #fff;
+        }
+
+        .total-ok {
+            color: var(--pass);
+        }
+
+        .total-low {
+            color: var(--fail);
+        }
+
+        /* =============================================
+           RESPONSIVE
+        ============================================= */
+        @media (max-width:700px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .server-pill {
+                display: none;
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .page {
+                padding: 0 16px;
+            }
+
+            .search-hero {
+                padding: 32px 0 28px;
+            }
+
+            .search-btn {
+                padding: 0 18px;
+                font-size: 13px;
+            }
+
+            .search-box input {
+                padding: 16px 16px;
+                font-size: 14px;
+            }
+
+            .card-top {
+                padding: 18px 18px 16px;
+            }
+
+            .info-cell {
+                border-right: none;
+                border-bottom: 1px solid var(--border-soft);
+            }
+
+            .info-cell:last-child {
+                border-bottom: none;
+            }
+
+            .pct-cell,
+            .stat-cell {
+                border-right: none;
+                border-bottom: 1px solid var(--border-soft);
+                flex: none;
+                width: 100%;
+            }
+
+            .stat-cell:last-child {
+                border-bottom: none;
+            }
+
+            .table-section {
+                padding: 14px 14px 20px;
+            }
+
+            th,
+            td {
+                padding: 10px 10px;
+            }
+        }
+
+        @media (max-width:400px) {
+            .brand-text p {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="header-brand">
+                <div class="brand-emblem">D</div>
+                <div class="brand-text">
+                    <h1>Analytics of Durg University</h1>
+                    <p>by Sameer Banchhor</p>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link">Dashboard</a>
+                <a href="analysis.html" class="nav-link">Analytics</a>
+                <a href="student.html" class="nav-link active">Students</a>
+                <a href="status.html" class="nav-link">Server Status</a>
+                <a href="prediction.html" class="nav-link">AI Prediction</a>
+            </nav>
+
+            <div class="server-pill">
+                <div class="header-dot"></div>
+                <span>HYV Node-01</span>
+            </div>
+
+            <div class="theme-toggle-wrap">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                    <rect y="4" width="22" height="2" rx="1" fill="white" />
+                    <rect y="10" width="22" height="2" rx="1" fill="white" />
+                    <rect y="16" width="22" height="2" rx="1" fill="white" />
+                </svg>
+            </button>
+        </div>
+        <div class="header-rule"></div>
+    </header>
+
+    <!-- Mobile Drawer -->
+    <div class="nav-drawer" id="navDrawer">
+        <div class="nav-backdrop" id="navBackdrop"></div>
+        <div class="nav-panel">
+            <button class="nav-panel-close" id="navClose" aria-label="Close menu">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M1 1l12 12M13 1L1 13" stroke="white" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+            <a href="index.html" class="nav-drawer-link">Dashboard</a>
+            <a href="analysis.html" class="nav-drawer-link">Analytics</a>
+            <a href="student.html" class="nav-drawer-link active">Students</a>
+            <a href="status.html" class="nav-drawer-link">Server Status</a>
+            <a href="prediction.html" class="nav-drawer-link">AI Prediction</a>
+        </div>
+    </div>
+
+    <div class="page">
+        <!-- SEARCH HERO -->
+        <div class="search-hero">
+            <div class="section-eyebrow">Result Search</div>
+            <h2 class="search-headline">Find your <em>Academic Result</em></h2>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Enter Roll Number or Student Name…"
+                    onkeydown="if(event.key==='Enter') fetchResults()">
+                <button class="search-btn" onclick="fetchResults()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="16.5" y1="16.5" x2="22" y2="22" />
+                    </svg>
+                    Search
+                </button>
+            </div>
+            <div class="search-hint">
+                Enter a numeric <code>Roll Number</code> for exact lookup, or a <code>Student Name</code> to search
+                across records.
+            </div>
+        </div>
+
+        <!-- STATUS AREAS -->
+        <div id="loadingArea" class="status-area">
+            <div class="loader-wrap">
+                <div class="loader-ring"></div>
+                <span class="loader-text">Fetching student records…</span>
+            </div>
+        </div>
+        <div id="errorArea" class="status-area">
+            <span class="status-pill error">⚠ Error connecting to API. Make sure the server is running at
+                <code>https://sameerbanchhor-work-durg-university-result-api.hf.space</code></span>
+        </div>
+        <div id="noResultsArea" class="status-area">
+            <span class="status-pill no-data">⊘ No student records found for that query.</span>
+        </div>
+
+        <!-- RESULTS -->
+        <div id="resultsContainer"></div>
+
+        <footer class="page-footer">
+            SAMEER BANCHHOR · University Analytics Portal · Data as of Feb 2026
+        </footer>
+    </div>
+
+    <script>
+        const API = 'https://sameerbanchhor-work-durg-university-result-api.hf.space/api/v1';
+
+        /* ─── SERVER STATUS ─────────────────────────────── */
+        async function checkServer() {
+            try {
+                const r = await fetch(`${API}/analytics/overview`);
+                const ok = r.ok;
+                document.getElementById('headerDot').style.background = ok ? '#4ade80' : '#f87171';
+                document.getElementById('serverStatus').textContent = ok ? 'Live · Synced' : 'Server Offline';
+                document.getElementById('serverStatus').style.color = ok ? '#86efac' : '#fca5a5';
+            } catch {
+                document.getElementById('headerDot').style.background = '#f87171';
+                document.getElementById('serverStatus').textContent = 'Server Offline';
+                document.getElementById('serverStatus').style.color = '#fca5a5';
+            }
+        }
+
+        /* ─── UI STATE ───────────────────────────────────── */
+        function resetUI() {
+            ['loadingArea', 'errorArea', 'noResultsArea'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+            document.getElementById('resultsContainer').innerHTML = '';
+        }
+
+        function show(id) { document.getElementById(id).style.display = 'block'; }
+
+        /* ─── SEARCH ─────────────────────────────────────── */
+        async function fetchResults() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) { document.getElementById('searchInput').focus(); return; }
+
+            resetUI();
+            show('loadingArea');
+
+            try {
+                const isRoll = /^\d+$/.test(query);
+                const url = isRoll ? `${API}/student/${query}` : `${API}/search?name=${encodeURIComponent(query)}`;
+                const r = await fetch(url);
+
+                document.getElementById('loadingArea').style.display = 'none';
+
+                if (r.status === 404) { show('noResultsArea'); return; }
+                if (!r.ok) throw new Error();
+
+                const data = await r.json();
+                const results = isRoll ? [data] : (data.results || []);
+
+                if (!results.length) { show('noResultsArea'); return; }
+                renderResults(results);
+
+            } catch {
+                document.getElementById('loadingArea').style.display = 'none';
+                show('errorArea');
+            }
+        }
+
+        /* ─── RENDER ─────────────────────────────────────── */
+        function renderResults(results) {
+            const container = document.getElementById('resultsContainer');
+
+            results.forEach((result, idx) => {
+                const status = (result.result_status || 'UNKNOWN').toUpperCase();
+                const accentCls = status === 'PASS' ? 'pass' : status === 'FAIL' ? 'fail' : 'supply';
+
+                let college = result.college || '—';
+                if (college.includes('-')) college = college.split('-').slice(1).join('-').trim();
+
+                const grandObt = parseFloat(result.grand_total_obtained) || 0;
+                const grandMax = parseFloat(result.grand_max_marks) || 0;
+                const grandPct = grandMax > 0 ? ((grandObt / grandMax) * 100).toFixed(2) : null;
+
+                /* --- Subjects Table --- */
+                const subRows = (result.subjects || []).map(s => {
+                    const thArr = [s.theory_marks?.I, s.theory_marks?.II, s.theory_marks?.III].filter(Boolean);
+                    const prArr = [
+                        s.practical_marks?.I, s.practical_marks?.II, s.practical_marks?.sessional,
+                        s.sessional_marks?.I ? `Sess:${s.sessional_marks.I}` : null
+                    ].filter(Boolean);
+
+                    const tot = parseFloat(s.subject_total) || 0;
+                    const min = parseFloat(s.min_marks) || 0;
+                    const cls = tot > 0 && min > 0 ? (tot >= min ? 'total-val total-ok' : 'total-val total-low') : 'total-val';
+
+                    return `<tr>
+                    <td class="left"><span class="subject-code">${s.subject_code}</span></td>
+                    <td class="left subject-name-cell">${s.subject_name}</td>
+                    <td>${s.max_marks || '—'}</td>
+                    <td>${s.min_marks || '—'}</td>
+                    <td>${thArr.length ? `<span class="marks-val">${thArr.join(' + ')}</span>` : '<span class="marks-empty">—</span>'}</td>
+                    <td><span class="marks-strong">${s.theory_total || '—'}</span></td>
+                    <td>${prArr.length ? `<span class="marks-val">${prArr.join(' + ')}</span>` : '<span class="marks-empty">—</span>'}</td>
+                    <td><span class="${cls}">${s.subject_total || '—'}</span></td>
+                </tr>`;
+                }).join('');
+
+                /* --- Past Years (UG) --- */
+                const py = result.past_years;
+                const pastYearsHTML = py && Object.keys(py).length ? `
+            <div class="year-strip">
+                <div class="stat-cell">
+                    <div class="stat-label">First Year</div>
+                    <div class="stat-value">${py.first_year_obtained || '—'} <span class="sub-value">/ ${py.first_year_max || '—'}</span></div>
+                </div>
+                <div class="stat-cell">
+                    <div class="stat-label">Second Year</div>
+                    <div class="stat-value">${py.second_year_obtained || '—'} <span class="sub-value">/ ${py.second_year_max || '—'}</span></div>
+                </div>
+            </div>` : '';
+
+                /* --- SGPA (PG) --- */
+                const sgpaHTML = result.sgpa ? `
+            <div class="stat-cell">
+                <div class="stat-label">Semester SGPA</div>
+                <div class="stat-value" style="color:var(--navy-light)">${result.sgpa}</div>
+            </div>` : '';
+
+                container.innerHTML += `
+            <div class="result-card" style="animation-delay:${idx * 0.08}s">
+                <div class="card-accent ${accentCls}"></div>
+
+                <div class="card-top">
+                    <div>
+                        <div class="exam-title">${result.exam_name || 'Examination Result'}</div>
+                        <div class="exam-subtitle">Type: ${result.student_type || '—'}${result.result_declared ? ` · Declared: ${result.result_declared}` : ''}</div>
+                    </div>
+                    <span class="result-pill ${status}">${status}</span>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-cell"><div class="info-label">Student Name</div><div class="info-value">${result.name || '—'}</div></div>
+                    <div class="info-cell"><div class="info-label">Roll Number</div><div class="info-value">${result.roll_number || '—'}</div></div>
+                    <div class="info-cell"><div class="info-label">Enrollment No.</div><div class="info-value">${result.enrollment_no || '—'}</div></div>
+                    <div class="info-cell"><div class="info-label">Father / Husband</div><div class="info-value">${result.father_husband_name || '—'}</div></div>
+                    <div class="info-cell"><div class="info-label">Mother's Name</div><div class="info-value">${result.mother_name || '—'}</div></div>
+                    <div class="info-cell"><div class="info-label">College</div><div class="info-value">${college}</div></div>
+                </div>
+
+                ${pastYearsHTML}
+
+                <div class="stats-strip">
+                    <div class="pct-cell">
+                        <div class="stat-label">Overall Performance (Grand Total)</div>
+                        <div class="pct-bar-track">
+                            <div class="pct-bar-fill" data-pct="${grandPct || 0}"></div>
+                        </div>
+                    </div>
+                    ${sgpaHTML}
+                    <div class="stat-cell">
+                        <div class="stat-label">Percentage</div>
+                        <div class="stat-value">${grandPct ? grandPct + '%' : '—'}</div>
+                    </div>
+                    <div class="stat-cell">
+                        <div class="stat-label">Grand Total</div>
+                        <div class="stat-value gold">${grandMax > 0 ? grandObt : '—'} <span class="sub-value">/ ${grandMax > 0 ? grandMax : '—'}</span></div>
+                    </div>
+                </div>
+
+                <div class="table-section">
+                    <div class="section-divider">Subject-wise Marks Breakdown</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr>
+                                <th class="left">Code</th>
+                                <th class="left">Subject Name</th>
+                                <th>Max</th><th>Min</th>
+                                <th>Theory (I,II,III)</th>
+                                <th>Th.Total</th>
+                                <th>Prac/Sess</th>
+                                <th>Total</th>
+                            </tr></thead>
+                            <tbody>${subRows}</tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>`;
+            });
+
+            /* Animate progress bars */
+            requestAnimationFrame(() => {
+                document.querySelectorAll('.pct-bar-fill').forEach(el => {
+                    el.style.width = Math.min(parseFloat(el.dataset.pct) || 0, 100) + '%';
+                });
+            });
+        }
+
+        /* ─── MOBILE NAV ─────────────────────────────────── */
+        const toggle = document.getElementById('navToggle');
+        const drawer = document.getElementById('navDrawer');
+        const backdrop = document.getElementById('navBackdrop');
+        const closeBtn = document.getElementById('navClose');
+
+        const openDrawer = () => { drawer.classList.add('open'); document.body.style.overflow = 'hidden'; };
+        const closeDrawer = () => { drawer.classList.remove('open'); document.body.style.overflow = ''; };
+
+        toggle.addEventListener('click', openDrawer);
+        closeBtn.addEventListener('click', closeDrawer);
+        backdrop.addEventListener('click', closeDrawer);
+
+        /* ─── BOOT ───────────────────────────────────────── */
+        window.addEventListener('DOMContentLoaded', checkServer);
+    </script>
+</body>
+
+</html>

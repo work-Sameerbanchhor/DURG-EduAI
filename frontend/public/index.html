@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Analytics – Dashboard | Hemchand Yadav Vishwavidyalaya</title>
+    <meta name="description"
+        content="Hemchand Yadav Vishwavidyalaya – University Analytics Dashboard with comprehensive results, institutional rankings, and merit list.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="theme.js"></script>
+    <style>
+        /* =============================================
+           DESIGN TOKENS
+        ============================================= */
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: rgba(255, 255, 255, 0.04);
+            --bg-card-hover: rgba(255, 255, 255, 0.07);
+            --surface: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-soft: rgba(255, 255, 255, 0.04);
+            --text: #e8e8ed;
+            --text-secondary: #9898a6;
+            --muted: #6b6b7b;
+            --accent: #7c3aed;
+            --accent2: #3b82f6;
+            --accent-gradient: linear-gradient(135deg, #7c3aed, #3b82f6);
+            --glow-accent: rgba(124, 58, 237, 0.25);
+            --green: #22c55e;
+            --green-dim: rgba(34, 197, 94, 0.12);
+            --red: #ef4444;
+            --red-dim: rgba(239, 68, 68, 0.12);
+            --red-text: #fca5a5;
+            --amber: #f59e0b;
+            --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --glass: blur(20px) saturate(180%);
+        }
+
+        :root.light-mode {
+            --bg: #f5f5f7;
+            --bg-card: rgba(0, 0, 0, 0.02);
+            --bg-card-hover: rgba(0, 0, 0, 0.04);
+            --surface: rgba(0, 0, 0, 0.03);
+            --border: rgba(0, 0, 0, 0.06);
+            --border-soft: rgba(0, 0, 0, 0.02);
+            --text: #1d1d1f;
+            --text-secondary: #424245;
+            --muted: #86868b;
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
+            --green: #16a34a;
+            --green-dim: rgba(22, 163, 74, 0.08);
+            --red: #dc2626;
+            --red-dim: rgba(220, 38, 38, 0.08);
+        }
+
+        .theme-toggle {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 8px;
+        }
+
+        .light-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            display: none;
+        }
+
+        .theme-toggle .icon-sun {
+            display: block;
+        }
+
+        .light-mode .theme-toggle .icon-sun {
+            display: none;
+        }
+
+        .light-mode .theme-toggle .icon-moon {
+            display: block;
+        }
+
+        .light-mode .site-header {
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .light-mode .stats-card,
+        .light-mode .widget {
+            background: #ffffff;
+            border-color: rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .light-mode .brand-text h1,
+        .light-mode .section-headline,
+        .light-mode .stat-value,
+        .light-mode .widget-title,
+        .light-mode .lead-name,
+        .light-mode .total-val {
+            color: var(--text);
+        }
+
+        .light-mode .stat-cell:hover {
+            background: rgba(0, 0, 0, 0.01);
+        }
+
+        /* =============================================
+           RESET & BASE
+        ============================================= */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 58, 237, 0.15), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(59, 130, 246, 0.08), transparent);
+            background-attachment: fixed;
+        }
+
+        /* =============================================
+           HEADER
+        ============================================= */
+        .site-header {
+            background: rgba(10, 10, 15, 0.7);
+            backdrop-filter: var(--glass);
+            -webkit-backdrop-filter: var(--glass);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .site-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--accent-gradient);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .brand-emblem {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            background: var(--accent-gradient);
+            flex-shrink: 0;
+            box-shadow: 0 4px 15px var(--glow-accent);
+        }
+
+        .brand-text h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.1;
+            white-space: nowrap;
+        }
+
+        .brand-text p {
+            font-size: 10px;
+            color: var(--muted);
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Hamburger */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 6px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .nav-toggle svg {
+            display: block;
+        }
+
+        /* Nav */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            margin-left: auto;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 7px 14px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-link.active {
+            color: #fff;
+            background: rgba(124, 58, 237, 0.2);
+        }
+
+        /* Server pill */
+        .server-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 400;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .theme-toggle-wrap {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            transition: background 0.3s;
+        }
+
+        .light-mode .header-dot {
+            background: var(--accent2);
+        }
+
+        .header-rule {
+            display: none;
+        }
+
+        /* =============================================
+           PAGE WRAPPER
+        ============================================= */
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* =============================================
+           SECTION LABELS
+        ============================================= */
+        .section-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .section-eyebrow::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .section-headline {
+            font-size: clamp(26px, 4vw, 38px);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.15;
+            margin-bottom: 32px;
+        }
+
+        .section-headline em {
+            font-style: normal;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* =============================================
+           HERO STATS
+        ============================================= */
+        .hero-section {
+            padding: 40px 0 0;
+        }
+
+        .stats-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: var(--glass);
+            -webkit-backdrop-filter: var(--glass);
+            animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes riseIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats-card-accent {
+            height: 2px;
+            background: var(--accent-gradient);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .stat-cell {
+            padding: 32px 28px;
+            text-align: center;
+            border-right: 1px solid var(--border-soft);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .stat-cell:last-child {
+            border-right: none;
+        }
+
+        .stat-cell:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 4px;
+            font-size: 18px;
+        }
+
+        .stat-icon.blue {
+            background: rgba(124, 58, 237, 0.12);
+        }
+
+        .stat-icon.gold {
+            background: rgba(59, 130, 246, 0.12);
+        }
+
+        .stat-icon.green {
+            background: var(--green-dim);
+        }
+
+        .stat-value {
+            font-size: clamp(34px, 5vw, 48px);
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .stat-value.accent {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-value.green {
+            color: var(--green);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .stat-bar {
+            width: 80%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .stat-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e, #4ade80);
+            border-radius: 99px;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.3s;
+        }
+
+        /* =============================================
+           ANALYTICS GRID
+        ============================================= */
+        .analytics-section {
+            padding: 48px 0 0;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .widget {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: var(--glass);
+            -webkit-backdrop-filter: var(--glass);
+            transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+            animation: riseIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .widget:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+
+        .widget:nth-child(2) {
+            animation-delay: 0.10s;
+        }
+
+        .widget:nth-child(3) {
+            animation-delay: 0.15s;
+        }
+
+        .widget:nth-child(4) {
+            animation-delay: 0.20s;
+        }
+
+        .widget:hover {
+            box-shadow: 0 8px 40px rgba(124, 58, 237, 0.15);
+            transform: translateY(-3px);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .widget-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .widget-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .widget-sub {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        .widget-badge {
+            padding: 4px 10px;
+            background: rgba(124, 58, 237, 0.15);
+            color: #a78bfa;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .chart-wrap {
+            position: relative;
+            flex: 1;
+            min-height: 260px;
+        }
+
+        /* =============================================
+           LEADERBOARD
+        ============================================= */
+        .leaderboard {
+            list-style: none;
+            padding: 0;
+        }
+
+        .lead-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 6px;
+            border-bottom: 1px solid var(--border-soft);
+            transition: background 0.2s;
+            border-radius: var(--radius-sm);
+        }
+
+        .lead-item:last-child {
+            border-bottom: none;
+        }
+
+        .lead-item:hover {
+            background: rgba(124, 58, 237, 0.06);
+        }
+
+        .rank-pip {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .rank-pip.r1 {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: #fff;
+        }
+
+        .rank-pip.r2 {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+            color: #fff;
+        }
+
+        .rank-pip.r3 {
+            background: linear-gradient(135deg, #cd7c2f, #a85e1f);
+            color: #fff;
+        }
+
+        .rank-pip.rn {
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .lead-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .lead-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lead-meta {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .lead-score {
+            font-size: 18px;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            flex-shrink: 0;
+        }
+
+        /* =============================================
+           BOTTLENECKS
+        ============================================= */
+        .bottle-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .bottle-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 16px;
+            background: var(--red-dim);
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            border-radius: var(--radius-sm);
+            transition: transform 0.2s;
+        }
+
+        .bottle-row:hover {
+            transform: translateX(4px);
+        }
+
+        .bottle-rank {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--red-text);
+            opacity: 0.6;
+            width: 20px;
+            flex-shrink: 0;
+        }
+
+        .bottle-name {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            min-width: 0;
+        }
+
+        .bottle-badge {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--red);
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 3px 10px;
+            border-radius: 8px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .bottle-bar-wrap {
+            width: 60px;
+            height: 5px;
+            background: rgba(239, 68, 68, 0.15);
+            border-radius: 99px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .bottle-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+            border-radius: 99px;
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* =============================================
+           FOOTER PAD
+        ============================================= */
+        .page-footer {
+            padding: 80px 0 60px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        /* =============================================
+           MOBILE NAV OVERLAY
+        ============================================= */
+        .nav-drawer {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+        }
+
+        .nav-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .nav-panel {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: min(280px, 80vw);
+            background: rgba(15, 15, 25, 0.95);
+            backdrop-filter: var(--glass);
+            -webkit-backdrop-filter: var(--glass);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            gap: 8px;
+            box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+            border-left: 1px solid var(--border);
+        }
+
+        .nav-panel-close {
+            align-self: flex-end;
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+
+        .nav-drawer-link {
+            display: block;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 12px 16px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .nav-drawer-link:hover,
+        .nav-drawer-link.active {
+            color: #fff;
+            background: rgba(124, 58, 237, 0.15);
+        }
+
+        .nav-drawer.open {
+            display: block;
+        }
+
+        /* =============================================
+           RESPONSIVE
+        ============================================= */
+        @media (max-width: 900px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .nav-menu {
+                display: none;
+            }
+
+            .server-pill {
+                display: none;
+            }
+
+            .nav-toggle {
+                display: flex;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-cell {
+                border-right: none;
+                border-bottom: 1px solid var(--border-soft);
+                padding: 24px 20px;
+            }
+
+            .stat-cell:last-child {
+                border-bottom: none;
+            }
+
+            .widget {
+                padding: 20px;
+            }
+
+            .widget-title {
+                font-size: 16px;
+            }
+
+            .chart-wrap {
+                min-height: 230px;
+            }
+
+            .section-headline {
+                font-size: 24px;
+                margin-bottom: 24px;
+            }
+
+            .analytics-section {
+                padding: 36px 0 0;
+            }
+
+            .page {
+                padding: 0 16px;
+            }
+
+            .hero-section {
+                padding: 28px 0 0;
+            }
+
+            .lead-score {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .brand-text p {
+                display: none;
+            }
+
+            .stat-value {
+                font-size: 32px;
+            }
+
+            .bottle-bar-wrap {
+                display: none;
+            }
+        }
+
+        /* =============================================
+           DEEP ANALYTICS SECTION (new)
+        ============================================= */
+        .deep-section {
+            padding: 48px 0 0;
+        }
+
+        .widget-full {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+            backdrop-filter: var(--glass);
+            -webkit-backdrop-filter: var(--glass);
+            transition: box-shadow .3s ease, transform .3s ease, border-color .3s ease;
+            animation: riseIn .6s cubic-bezier(.22, 1, .36, 1) both;
+        }
+
+        .widget-full:hover {
+            box-shadow: 0 8px 40px rgba(124, 58, 237, 0.15);
+            transform: translateY(-3px);
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .prog-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .prog-tab {
+            padding: 6px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 99px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .prog-tab:hover {
+            border-color: rgba(124, 58, 237, 0.4);
+            color: #fff;
+        }
+
+        .prog-tab.active {
+            background: var(--accent-gradient);
+            color: #fff;
+            border-color: transparent;
+        }
+
+        .prog-panel {
+            display: none;
+        }
+
+        .prog-panel.show {
+            display: block;
+        }
+
+        .compare-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .compare-cell {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 20px;
+        }
+
+        .compare-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .compare-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+        }
+
+        .compare-bar-wrap {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .compare-bar {
+            height: 100%;
+            border-radius: 99px;
+            transition: width 1.2s cubic-bezier(.22, 1, .36, 1);
+        }
+
+        @media (max-width: 700px) {
+            .deep-section {
+                padding: 36px 0 0;
+            }
+
+            .widget-full {
+                padding: 18px;
+            }
+
+            .compare-cell {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================================
+     HEADER
+============================================================ -->
+    <header class="site-header">
+        <div class="header-inner">
+            <div class="header-brand">
+                <div class="brand-emblem">D</div>
+                <div class="brand-text">
+                    <h1>Analytics of Durg University</h1>
+                    <p>by Sameer Banchhor</p>
+                </div>
+            </div>
+
+            <nav class="nav-menu" id="desktopNav">
+                <a href="index.html" class="nav-link active">Dashboard</a>
+                <a href="analysis.html" class="nav-link">Analytics</a>
+                <a href="student.html" class="nav-link">Students</a>
+                <a href="status.html" class="nav-link">Server Status</a>
+                <a href="prediction.html" class="nav-link">AI Prediction</a>
+            </nav>
+
+            <div class="server-pill">
+                <div class="header-dot"></div>
+                <span>HYV Node-01</span>
+            </div>
+
+            <div class="theme-toggle-wrap">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <button class="nav-toggle" id="navToggle" aria-label="Open menu">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                    <rect y="4" width="22" height="2" rx="1" fill="white" />
+                    <rect y="10" width="22" height="2" rx="1" fill="white" />
+                    <rect y="16" width="22" height="2" rx="1" fill="white" />
+                </svg>
+            </button>
+        </div>
+        <div class="header-rule"></div>
+    </header>
+
+    <!-- Mobile Nav Drawer -->
+    <div class="nav-drawer" id="navDrawer">
+        <div class="nav-backdrop" id="navBackdrop"></div>
+        <div class="nav-panel">
+            <button class="nav-panel-close" id="navClose" aria-label="Close menu">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M1 1l12 12M13 1L1 13" stroke="white" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </button>
+            <a href="index.html" class="nav-drawer-link active">Dashboard</a>
+            <a href="analysis.html" class="nav-drawer-link">Analytics</a>
+            <a href="student.html" class="nav-drawer-link">Students</a>
+            <a href="status.html" class="nav-drawer-link">Server Status</a>
+            <a href="prediction.html" class="nav-drawer-link">AI Prediction</a>
+        </div>
+    </div>
+
+    <!-- ============================================================
+     HERO STATS
+============================================================ -->
+    <div class="page">
+        <section class="hero-section">
+            <div class="section-eyebrow">Database Overview</div>
+            <h2 class="section-headline">University <em>Data at a Glance</em></h2>
+
+            <div class="stats-card">
+                <div class="stats-card-accent"></div>
+                <div class="stats-grid">
+                    <div class="stat-cell">
+                        <!-- <div class="stat-icon blue">🎓</div> -->
+                        <div class="stat-value" id="countStudents">248,541</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                    <div class="stat-cell">
+                        <!-- <div class="stat-icon gold">🏛️</div> -->
+                        <div class="stat-value accent" id="countColleges">131</div>
+                        <div class="stat-label">Colleges</div>
+                    </div>
+                    <div class="stat-cell">
+                        <!-- <div class="stat-icon green"></div> -->
+                        <div class="stat-value green">81.70%</div>
+                        <div class="stat-label">Pass Rate</div>
+                        <div class="stat-bar">
+                            <div class="stat-bar-fill" id="passRateBar" style="width:81.7%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ============================================================
+             DEEP ANALYTICS – from deep_analysis.md
+        ============================================================ -->
+        <section class="deep-section">
+            <div class="section-eyebrow">Deep Analysis Report</div>
+            <h2 class="section-headline">Advanced <em>Academic Intelligence</em></h2>
+
+            <!-- Row 1: Grade Bell Curve + Multi-Year Trajectory -->
+            <div class="analytics-grid" style="margin-bottom:24px;">
+
+                <!-- Grade Distribution -->
+                <div class="widget">
+                    <div class="widget-head">
+                        <div>
+                            <div class="widget-title">UG Grade Bell Curve</div>
+                            <div class="widget-sub">Undergraduate score bracket distribution</div>
+                        </div>
+                        <div class="widget-badge">121,831 Students</div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="chartGrade"></canvas>
+                    </div>
+                </div>
+
+                <!-- Multi-Year Trajectory -->
+                <div class="widget">
+                    <div class="widget-head">
+                        <div>
+                            <div class="widget-title">Multi-Year Trajectory</div>
+                            <div class="widget-sub">UG cohort average marks across 3 years</div>
+                        </div>
+                        <div class="widget-badge">103,696 Cohort</div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="chartTrajectory"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Row 2: Enrollment Type + Course Comparison -->
+            <div class="analytics-grid" style="margin-bottom:24px;">
+
+                <!-- Enrollment Type Comparison -->
+                <div class="widget">
+                    <div class="widget-head">
+                        <div>
+                            <div class="widget-title">Enrollment Type Analysis</div>
+                            <div class="widget-sub">Regular vs Private/Ex-Student performance</div>
+                        </div>
+                        <div class="widget-badge">248K Students</div>
+                    </div>
+                    <div style="margin-bottom:20px;">
+                        <div class="compare-row" id="enrollCompare">
+                            <div class="compare-cell">
+                                <div class="compare-label">🏫 Regular Students</div>
+                                <div class="compare-value" style="color:var(--green)">86.0%</div>
+                                <div style="font-size:12px;color:var(--muted);margin-top:4px;">211,093 students · Avg
+                                    62%</div>
+                                <div class="compare-bar-wrap">
+                                    <div class="compare-bar" data-w="86"
+                                        style="background:linear-gradient(90deg,#166534,#4ade80);width:0"></div>
+                                </div>
+                            </div>
+                            <div class="compare-cell">
+                                <div class="compare-label">🏠 Private / Ex-Students</div>
+                                <div class="compare-value" style="color:#f59e0b">57.5%</div>
+                                <div style="font-size:12px;color:var(--muted);margin-top:4px;">37,448 students · Avg 48%
+                                </div>
+                                <div class="compare-bar-wrap">
+                                    <div class="compare-bar" data-w="57.5"
+                                        style="background:linear-gradient(90deg,#92400e,#fbbf24);width:0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-wrap" style="min-height:160px;">
+                        <canvas id="chartEnrollment"></canvas>
+                    </div>
+                </div>
+
+                <!-- Course Comparison -->
+                <div class="widget">
+                    <div class="widget-head">
+                        <div>
+                            <div class="widget-title">Course vs Course</div>
+                            <div class="widget-sub">Academic program success comparison</div>
+                        </div>
+                        <div class="widget-badge">3 Programs</div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="chartCourse"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Row 3: Program-wise Toppers (full width) -->
+            <div class="widget-full">
+                <div class="widget-head">
+                    <div>
+                        <div class="widget-title">Program-wise Merit Leaders</div>
+                        <div class="widget-sub">Top performers by degree program</div>
+                    </div>
+                    <div class="widget-badge">UG & PG</div>
+                </div>
+
+                <div class="prog-tabs">
+                    <button class="prog-tab active" onclick="showProg('other-ug', this)">Other Programs (UG)</button>
+                    <button class="prog-tab" onclick="showProg('ba',       this)">B.A.</button>
+                    <button class="prog-tab" onclick="showProg('ma-pg',    this)">M.A. (PG)</button>
+                    <button class="prog-tab" onclick="showProg('other-pg', this)">Other Programs (PG)</button>
+                </div>
+
+                <!-- Other UG -->
+                <div class="prog-panel show" id="prog-other-ug">
+                    <ul class="leaderboard">
+                        <li class="lead-item">
+                            <div class="rank-pip r1">1</div>
+                            <div class="lead-info">
+                                <div class="lead-name">CHINMAYEE BEHERA</div>
+                                <div class="lead-meta">GHANSHYAM SINGH ARYA KANYA COLLEGE, AARYANAGAR, DURG</div>
+                            </div>
+                            <div class="lead-score">95.78%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r2">2</div>
+                            <div class="lead-info">
+                                <div class="lead-name">SHAGUFTA SIDDIQUI</div>
+                                <div class="lead-meta">SHRI SHANKARACHARYA MAHAVIDYALAYA, JUNWANI, BHILAI</div>
+                            </div>
+                            <div class="lead-score">95.56%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r3">3</div>
+                            <div class="lead-info">
+                                <div class="lead-name">PREETI DEWANGAN</div>
+                                <div class="lead-meta">SHRI SHANKARACHARYA MAHAVIDYALAYA, JUNWANI, BHILAI</div>
+                            </div>
+                            <div class="lead-score">95.11%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip rn">4</div>
+                            <div class="lead-info">
+                                <div class="lead-name">EKTA RAJANI</div>
+                                <div class="lead-meta">GHANSHYAM SINGH ARYA KANYA COLLEGE, AARYANAGAR, DURG</div>
+                            </div>
+                            <div class="lead-score">94.89%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip rn">5</div>
+                            <div class="lead-info">
+                                <div class="lead-name">TANVIR TABASSUM</div>
+                                <div class="lead-meta">KALYAN P.G. COLLEGE, SECTOR 7, BHILAI NAGAR</div>
+                            </div>
+                            <div class="lead-score">94.89%</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- B.A. -->
+                <div class="prog-panel" id="prog-ba">
+                    <ul class="leaderboard">
+                        <li class="lead-item">
+                            <div class="rank-pip r1">1</div>
+                            <div class="lead-info">
+                                <div class="lead-name">ANUSHA K.V.</div>
+                                <div class="lead-meta">ST. THOMAS COLLEGE, RUABANDHA, BHILAI</div>
+                            </div>
+                            <div class="lead-score">88.50%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r2">2</div>
+                            <div class="lead-info">
+                                <div class="lead-name">G PRIYANKA</div>
+                                <div class="lead-meta">ST. THOMAS COLLEGE, RUABANDHA, BHILAI</div>
+                            </div>
+                            <div class="lead-score">86.33%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r3">3</div>
+                            <div class="lead-info">
+                                <div class="lead-name">RISHABH TIWARI</div>
+                                <div class="lead-meta">ST. THOMAS COLLEGE, RUABANDHA, BHILAI</div>
+                            </div>
+                            <div class="lead-score">86.00%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip rn">4</div>
+                            <div class="lead-info">
+                                <div class="lead-name">PRIYANKA ROY</div>
+                                <div class="lead-meta">ST. THOMAS COLLEGE, RUABANDHA, BHILAI</div>
+                            </div>
+                            <div class="lead-score">85.33%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip rn">5</div>
+                            <div class="lead-info">
+                                <div class="lead-name">NITESH LAKRA</div>
+                                <div class="lead-meta">ST. THOMAS COLLEGE, RUABANDHA, BHILAI</div>
+                            </div>
+                            <div class="lead-score">85.17%</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- M.A. PG -->
+                <div class="prog-panel" id="prog-ma-pg">
+                    <ul class="leaderboard">
+                        <li class="lead-item">
+                            <div class="rank-pip r1">1</div>
+                            <div class="lead-info">
+                                <div class="lead-name">ABHISHEK NAMDEO</div>
+                                <div class="lead-meta">GOVT. CHANDULAL CHANDRAKAR ARTS & SCIENCE COLLEGE, PATAN</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r1">2</div>
+                            <div class="lead-info">
+                                <div class="lead-name">NUTAN SAHU</div>
+                                <div class="lead-meta">GOVT. NEHRU P.G. COLLEGE, DONGARGARH, RAJNANDGAON</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r1">3</div>
+                            <div class="lead-info">
+                                <div class="lead-name">BABLI</div>
+                                <div class="lead-meta">GOVT. DANVEER TULARAM COLLEGE, UTAI</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r1">4</div>
+                            <div class="lead-info">
+                                <div class="lead-name">SAKSHI SAINIK</div>
+                                <div class="lead-meta">ST. THOMAS COLLEGE, RUABANDHA, BHILAI</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r1">5</div>
+                            <div class="lead-info">
+                                <div class="lead-name">SHRINE SHAJI</div>
+                                <div class="lead-meta">SHRI SHANKARACHARYA MAHAVIDYALAYA, JUNWANI, BHILAI</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Other PG -->
+                <div class="prog-panel" id="prog-other-pg">
+                    <ul class="leaderboard">
+                        <li class="lead-item">
+                            <div class="rank-pip r1">1</div>
+                            <div class="lead-info">
+                                <div class="lead-name">HARSHITA</div>
+                                <div class="lead-meta">SHRI SHANKARACHARYA MAHAVIDYALAYA, JUNWANI, BHILAI</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r1">2</div>
+                            <div class="lead-info">
+                                <div class="lead-name">MUKTI DEWANGAN</div>
+                                <div class="lead-meta">SHRI SHANKARACHARYA MAHAVIDYALAYA, JUNWANI, BHILAI</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r1">3</div>
+                            <div class="lead-info">
+                                <div class="lead-name">MANISHA</div>
+                                <div class="lead-meta">SHRI SHANKARACHARYA MAHAVIDYALAYA, JUNWANI, BHILAI</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r1">4</div>
+                            <div class="lead-info">
+                                <div class="lead-name">BHAVANTI TILAVAT</div>
+                                <div class="lead-meta">SHRI SHANKARACHARYA MAHAVIDYALAYA, JUNWANI, BHILAI</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r1">5</div>
+                            <div class="lead-info">
+                                <div class="lead-name">BHARAT</div>
+                                <div class="lead-meta">SHRI SHANKARACHARYA MAHAVIDYALAYA, JUNWANI, BHILAI</div>
+                            </div>
+                            <div class="lead-score">10.00 SGPA</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Row 4: Top 10 Easiest Subjects (full width) -->
+            <div class="widget-full">
+                <div class="widget-head">
+                    <div>
+                        <div class="widget-title">Top 10 Easiest Subjects</div>
+                        <div class="widget-sub">Highest average scoring subjects (Min. 100 attempts)</div>
+                    </div>
+                    <div class="widget-badge" style="background:rgba(34,197,94,0.12);color:#4ade80;">High Scoring</div>
+                </div>
+                <div class="chart-wrap" style="min-height:300px;">
+                    <canvas id="chartEasy"></canvas>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ============================================================
+         ANALYTICS WIDGETS
+    ============================================================ -->
+        <section class="analytics-section">
+            <div class="section-eyebrow">Comprehensive Report</div>
+            <h2 class="section-headline">University <em>Deep Analytics</em></h2>
+
+            <div class="analytics-grid">
+
+                <!-- 1 · Result Status Doughnut -->
+                <div class="widget">
+                    <div class="widget-head">
+                        <div>
+                            <div class="widget-title">Result Distribution</div>
+                            <div class="widget-sub">Status breakdown across all students</div>
+                        </div>
+                        <div class="widget-badge">248K Students</div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="chartDoughnut"></canvas>
+                    </div>
+                </div>
+
+                <!-- 2 · Top Colleges Bar -->
+                <div class="widget">
+                    <div class="widget-head">
+                        <div>
+                            <div class="widget-title">Top Performing Colleges</div>
+                            <div class="widget-sub">Ranked by pass percentage</div>
+                        </div>
+                        <div class="widget-badge">Min. 50 Students</div>
+                    </div>
+                    <div class="chart-wrap">
+                        <canvas id="chartColleges"></canvas>
+                    </div>
+                </div>
+
+                <!-- 3 · Merit Leaderboard -->
+                <div class="widget">
+                    <div class="widget-head">
+                        <div>
+                            <div class="widget-title">University Merit List</div>
+                            <div class="widget-sub">Top undergraduate performers</div>
+                        </div>
+                        <div class="widget-badge">UG Topper</div>
+                    </div>
+                    <ul class="leaderboard">
+                        <li class="lead-item">
+                            <div class="rank-pip r1">1</div>
+                            <div class="lead-info">
+                                <div class="lead-name">BHAWNA SAHU</div>
+                                <div class="lead-meta">GOVT. GHANSHYAM SINGH GUPT P.G. COLLEGE, BALOD</div>
+                            </div>
+                            <div class="lead-score">89.50%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r2">2</div>
+                            <div class="lead-info">
+                                <div class="lead-name">PALLAVI SHARMA</div>
+                                <div class="lead-meta">ST. THOMAS COLLEGE, RUABANDHA, BHILAI</div>
+                            </div>
+                            <div class="lead-score">89.33%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip r3">3</div>
+                            <div class="lead-info">
+                                <div class="lead-name">DEVYANI SONI</div>
+                                <div class="lead-meta">SWAMI SHRI SWAROOPANAND SARASWATI MVY.</div>
+                            </div>
+                            <div class="lead-score">89.33%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip rn">4</div>
+                            <div class="lead-info">
+                                <div class="lead-name">MANISH PAUL</div>
+                                <div class="lead-meta">SWAMI SHRI SWAROOPANAND SARASWATI MVY.</div>
+                            </div>
+                            <div class="lead-score">89.00%</div>
+                        </li>
+                        <li class="lead-item">
+                            <div class="rank-pip rn">5</div>
+                            <div class="lead-info">
+                                <div class="lead-name">PURVI JAIN</div>
+                                <div class="lead-meta">ST. THOMAS COLLEGE, RUABANDHA, BHILAI</div>
+                            </div>
+                            <div class="lead-score">88.83%</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 4 · Academic Bottlenecks -->
+                <div class="widget">
+                    <div class="widget-head">
+                        <div>
+                            <div class="widget-title">Academic Bottlenecks</div>
+                            <div class="widget-sub">Subjects with lowest avg. scores</div>
+                        </div>
+                        <div class="widget-badge">Min. 100 Attempts</div>
+                    </div>
+                    <div class="bottle-list">
+                        <div class="bottle-row">
+                            <span class="bottle-rank">#1</span>
+                            <span class="bottle-name">FC-ENGLISH LANGUAGE</span>
+                            <div class="bottle-bar-wrap">
+                                <div class="bottle-bar" style="width:41.86%"></div>
+                            </div>
+                            <span class="bottle-badge">41.86%</span>
+                        </div>
+                        <div class="bottle-row">
+                            <span class="bottle-rank">#2</span>
+                            <span class="bottle-name">ENGLISH LITERATURE (20TH CENT.)</span>
+                            <div class="bottle-bar-wrap">
+                                <div class="bottle-bar" style="width:42.02%"></div>
+                            </div>
+                            <span class="bottle-badge">42.02%</span>
+                        </div>
+                        <div class="bottle-row">
+                            <span class="bottle-rank">#3</span>
+                            <span class="bottle-name">ENVIRONMENTAL STUDIES & HR</span>
+                            <div class="bottle-bar-wrap">
+                                <div class="bottle-bar" style="width:42.06%"></div>
+                            </div>
+                            <span class="bottle-badge">42.06%</span>
+                        </div>
+                        <div class="bottle-row">
+                            <span class="bottle-rank">#4</span>
+                            <span class="bottle-name">MACRO ECONOMICS - I</span>
+                            <div class="bottle-bar-wrap">
+                                <div class="bottle-bar" style="width:44.94%"></div>
+                            </div>
+                            <span class="bottle-badge">44.94%</span>
+                        </div>
+                        <div class="bottle-row">
+                            <span class="bottle-rank">#5</span>
+                            <span class="bottle-name">COLONIAL & POST COLONIAL STUDIES-II</span>
+                            <div class="bottle-bar-wrap">
+                                <div class="bottle-bar" style="width:46.05%"></div>
+                            </div>
+                            <span class="bottle-badge">46.05%</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /analytics-grid -->
+        </section>
+
+        <footer class="page-footer">
+            SAMEER BANCHHOR · University Analytics Portal · Data as of Feb 2026
+        </footer>
+    </div><!-- /page -->
+
+    <script>
+        /* ─── API ─────────────────────────────────────────── */
+        const API = 'https://sameerbanchhor-work-durg-university-result-api.hf.space/api/v1';
+
+        async function fetchStats() {
+            try {
+                const [ovRes, colRes] = await Promise.all([
+                    fetch(`${API}/analytics/overview`),
+                    fetch(`${API}/analytics/colleges`)
+                ]);
+
+                if (ovRes.ok) {
+                    const d = await ovRes.json();
+                    animateNum('countStudents', 0, d.total_students, 1800);
+                }
+                if (colRes.ok) {
+                    const d = await colRes.json();
+                    animateNum('countColleges', 0, d.length, 1800);
+                }
+
+                setStatus(true);
+            } catch {
+                setStatus(false);
+            }
+        }
+
+        function setStatus(online) {
+            const dot = document.getElementById('headerDot');
+            const txt = document.getElementById('serverStatus');
+            dot.style.background = online ? '#4ade80' : '#f87171';
+            txt.textContent = online ? 'Live · Synced' : 'Server Offline';
+            txt.style.color = online ? '#86efac' : '#fca5a5';
+        }
+
+        function animateNum(id, start, end, dur) {
+            const el = document.getElementById(id);
+            if (!el || start === end) return;
+            const s = performance.now();
+            function tick(now) {
+                const p = Math.min((now - s) / dur, 1);
+                const e = p < 1 ? p * (2 - p) : 1; // ease‑out quad
+                el.textContent = Math.floor(e * (end - start) + start).toLocaleString();
+                if (p < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+
+        /* ─── CHARTS ─────────────────────────────────────── */
+        function initCharts() {
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#6b6b7b';
+
+            /* Doughnut */
+            new Chart(document.getElementById('chartDoughnut'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Pass', 'Supply', 'Fail', 'ATKT', 'Grace', 'Withheld'],
+                    datasets: [{
+                        data: [203070, 18218, 10765, 9224, 5453, 1411],
+                        backgroundColor: ['#7c3aed', '#3b82f6', '#ef4444', '#6366f1', '#a78bfa', '#475569'],
+                        borderWidth: 0,
+                        hoverOffset: 18
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    cutout: '72%',
+                    animation: { animateScale: true, animateRotate: true, duration: 1000 },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 16, font: { size: 11 }, color: '#9898a6' } },
+                        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed.toLocaleString()} (${(ctx.parsed / 248541 * 100).toFixed(2)}%)` } }
+                    }
+                }
+            });
+
+            /* Bar : colleges */
+            new Chart(document.getElementById('chartColleges'), {
+                type: 'bar',
+                data: {
+                    labels: ['Inst. Lang., Dhanora', 'Shiva College, Bhilai', 'Bhilai Mahila MVY.', 'Ghanshyam Arya Kanya', 'Bharti College, Durg'],
+                    datasets: [{
+                        label: 'Pass %',
+                        data: [97.60, 96.57, 93.42, 92.61, 92.47],
+                        backgroundColor: ['rgba(124,58,237,0.85)', 'rgba(124,58,237,0.70)', 'rgba(124,58,237,0.55)', 'rgba(124,58,237,0.40)', 'rgba(124,58,237,0.28)'],
+                        borderRadius: 10, borderSkipped: 'start', barThickness: 28
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    animation: { duration: 1000 },
+                    scales: {
+                        x: { beginAtZero: false, min: 85, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 }, color: '#6b6b7b', callback: v => v + '%' } },
+                        y: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#9898a6' } }
+                    },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x}%` } } }
+                }
+            });
+            /* Grade Bell Curve */
+            new Chart(document.getElementById('chartGrade'), {
+                type: 'bar',
+                data: {
+                    labels: ['Distinction\n(>75%)', 'First Div\n(60–75%)', 'Second Div\n(45–60%)', 'Third Div\n(33–45%)', 'Fail/Supply\n(<33%)'],
+                    datasets: [{
+                        label: 'Students', data: [8349, 35369, 53925, 16940, 7248],
+                        backgroundColor: ['#7c3aed', '#6366f1', '#3b82f6', '#64748b', '#ef4444'],
+                        borderRadius: 10, borderSkipped: 'start'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: { duration: 1000 },
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 }, color: '#6b6b7b', callback: v => v.toLocaleString() } },
+                        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#9898a6' } }
+                    },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y.toLocaleString()} students` } } }
+                }
+            });
+
+            /* Multi-Year Trajectory */
+            new Chart(document.getElementById('chartTrajectory'), {
+                type: 'line',
+                data: {
+                    labels: ['1st Year', '2nd Year', '3rd Year'],
+                    datasets: [{
+                        label: 'Avg Marks', data: [354.1, 346.5, 330.5],
+                        borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,0.12)',
+                        borderWidth: 3, pointRadius: 7, pointBackgroundColor: '#7c3aed',
+                        pointBorderColor: '#0a0a0f', pointBorderWidth: 2, tension: 0.35, fill: true
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: { duration: 1000 },
+                    scales: {
+                        y: { min: 310, max: 370, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 }, color: '#6b6b7b' } },
+                        x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' }, color: '#9898a6' } }
+                    },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` Avg: ${ctx.parsed.y} marks` } } }
+                }
+            });
+
+            /* Enrollment Comparison */
+            new Chart(document.getElementById('chartEnrollment'), {
+                type: 'bar',
+                data: {
+                    labels: ['Pass Rate', 'Avg Score (%)'],
+                    datasets: [
+                        { label: 'Regular', data: [86.0, 62.0], backgroundColor: 'rgba(34,197,94,0.65)', borderRadius: 8, borderSkipped: 'start' },
+                        { label: 'Private/Ex', data: [57.5, 48.0], backgroundColor: 'rgba(245,158,11,0.55)', borderRadius: 8, borderSkipped: 'start' }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: { duration: 900 },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 }, color: '#6b6b7b', callback: v => v + '%' } },
+                        x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#9898a6' } }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 10, padding: 14, font: { size: 11 }, color: '#9898a6' } },
+                        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%` } }
+                    }
+                }
+            });
+
+            /* Course Comparison */
+            new Chart(document.getElementById('chartCourse'), {
+                type: 'bar',
+                data: {
+                    labels: ['Other Programs', 'M.A.', 'B.A.'],
+                    datasets: [{
+                        label: 'Pass Rate (%)',
+                        data: [85.4, 92.8, 64.1],
+                        backgroundColor: ['rgba(124,58,237,0.75)', 'rgba(59,130,246,0.75)', 'rgba(239,68,68,0.65)'],
+                        borderRadius: 10, borderSkipped: 'start', barThickness: 36
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, animation: { duration: 1000 },
+                    scales: {
+                        y: { beginAtZero: false, min: 50, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 }, color: '#6b6b7b', callback: v => v + '%' } },
+                        x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' }, color: '#9898a6' } }
+                    },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` Pass Rate: ${ctx.parsed.y}%` } } }
+                }
+            });
+
+            /* Top 10 Easiest Subjects */
+            new Chart(document.getElementById('chartEasy'), {
+                type: 'bar',
+                data: {
+                    labels: ['Psycho-metric Assessment', 'Internship & School Activities', 'Exploring Library Resources', 'Academic Writing', 'Major Project', 'Practical: Paper III', 'Practical: Paper I', 'Proposal of Dissertation', 'Project Work', 'Programming Lab: Paper III'],
+                    datasets: [{
+                        label: 'Avg Score %',
+                        data: [94.91, 94.60, 94.19, 93.58, 89.72, 85.44, 84.89, 84.75, 84.70, 84.58],
+                        backgroundColor: ['rgba(34,197,94,0.85)', 'rgba(34,197,94,0.78)', 'rgba(34,197,94,0.71)', 'rgba(34,197,94,0.64)', 'rgba(34,197,94,0.57)', 'rgba(34,197,94,0.50)', 'rgba(34,197,94,0.44)', 'rgba(34,197,94,0.38)', 'rgba(34,197,94,0.32)', 'rgba(34,197,94,0.26)'],
+                        borderRadius: 8, borderSkipped: 'start', barThickness: 22
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false, animation: { duration: 1100 },
+                    scales: {
+                        x: { beginAtZero: false, min: 75, max: 100, grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { font: { size: 10 }, color: '#6b6b7b', callback: v => v + '%' } },
+                        y: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#9898a6' } }
+                    },
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` Avg: ${ctx.parsed.x}%` } } }
+                }
+            });
+        }
+
+        /* ─── PASS RATE BAR ANIMATION ─────────────────────── */
+        function animatePassBar() {
+            setTimeout(() => {
+                const bar = document.getElementById('passRateBar');
+                if (bar) bar.style.transform = 'scaleX(1)';
+            }, 400);
+        }
+
+        /* ─── MOBILE NAV ─────────────────────────────────── */
+        const toggle = document.getElementById('navToggle');
+        const drawer = document.getElementById('navDrawer');
+        const backdrop = document.getElementById('navBackdrop');
+        const closeBtn = document.getElementById('navClose');
+
+        function openDrawer() { drawer.classList.add('open'); document.body.style.overflow = 'hidden'; }
+        function closeDrawer() { drawer.classList.remove('open'); document.body.style.overflow = ''; }
+
+        toggle.addEventListener('click', openDrawer);
+        closeBtn.addEventListener('click', closeDrawer);
+        backdrop.addEventListener('click', closeDrawer);
+
+        /* ─── PROGRAM TOPPER TABS ─────────────────────────── */
+        function showProg(id, btn) {
+            document.querySelectorAll('.prog-panel').forEach(p => p.classList.remove('show'));
+            document.querySelectorAll('.prog-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById('prog-' + id).classList.add('show');
+            btn.classList.add('active');
+        }
+
+        /* ─── ENROLLMENT COMPARE BARS ────────────────────── */
+        function animateCompareBars() {
+            setTimeout(() => {
+                document.querySelectorAll('.compare-bar').forEach(el => {
+                    el.style.width = (el.dataset.w || 0) + '%';
+                });
+            }, 500);
+        }
+
+        /* ─── BOOT ───────────────────────────────────────── */
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchStats();
+            initCharts();
+            animatePassBar();
+            animateCompareBars();
+        });
+    </script>
+</body>
+
+</html>
